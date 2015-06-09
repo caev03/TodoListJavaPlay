@@ -1,0 +1,74 @@
+@(tasks: List[Task],tags: List[Tag], taskForm: Form[Task], tagForm: Form[Tag])
+
+@import helper._
+@import scala.collection._
+
+@main("Todo list") {
+    
+    <table style="width:100%">
+    	<tr>
+    		<td colspan="4"><h1> TODO LIST </h1></td>
+    		<td colspan="3"><h1>@tasks.size() task(s)</h1></td>
+    	</tr>
+       	<tr>
+    		<th>Task Name</th>
+    		<th>Notes</th>
+    		<th>Priority</th>
+    		<th>Tags</th>
+    		<th colspan="3">Options</th>
+    	</tr>
+        @for(task <- tasks){
+        <tr>
+            <td>@task.label</td>
+            <td>@task.notes</td>
+            <td>@task.priority</td>
+            <td>@task.tags.toString()</td>
+            <td>
+            @form(routes.Application.editTask(task.id)) {
+            <input type="submit" value="Edit">
+            }  
+            </td>
+            <td>
+            @select(field = tagForm("Select Tag"), tags.map{t => t.label -> t.label})
+            @form(routes.Application.editTask(task.id)) {
+            <input type="submit" value="add">
+            }
+            </td>
+            <td>
+            @form(routes.Application.deleteTask(task.id)) {
+            <input type="submit" value="Delete">
+            }  
+            </td>            
+        </tr>
+        }
+    </table>
+    
+    <h2>Add a new task</h2>
+    
+    @form(routes.Application.newTask()){
+        
+        @inputText(taskForm("label"), '_label -> "Task Name") 
+        @inputText(taskForm("notes"), '_label -> "Notes")
+        @inputText(taskForm("priority"), '_label -> "Priority")
+        
+        <input type="submit" value="Create">
+        
+    }
+    
+    <h2>Add a new tag</h2>
+    
+    @form(routes.Application.newTag()){
+        
+        @inputText(tagForm("label"), '_label -> "Task Name")
+        
+        <input type="submit" value="Create">
+        
+    }
+    <select>
+    @for(tag <- tags){
+    <option value=@tag.label>@tag.label.toUpperCase()</option>
+    }
+    </select>
+    
+    
+}
